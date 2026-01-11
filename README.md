@@ -274,3 +274,6 @@ spring.task.execution.pool.max-size=10
 ✅ **Error Handling**: Global exception handling  
 
 Service ini siap digunakan untuk assessment interview dan menghandle semua requirement yang diberikan!
+=======
+# notification-service
+>>>>>>> bd9f5266f16483f947b8f02494d3bcad21c540f5
