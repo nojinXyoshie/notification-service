@@ -4,26 +4,20 @@ Microservice untuk mengelola notifikasi dalam sistem pembayaran dengan fitur ide
 
 ## 🏗️ Architecture Overview
 
-Sistem pembayaran terdiri dari 3 microservice:
-- **Order Service**: Mengelola pesanan dan inisiasi pembayaran
-- **Payment Service**: Memproses pembayaran dan mengirim callback
-- **Notification Service**: Mengirim notifikasi ke customer (service ini)
+Notification Service adalah bagian dari sistem pembayaran yang bertanggung jawab untuk:
+- **Menerima callback** dari Payment Service
+- **Mengirim notifikasi** ke customer via email
+- **Menjamin idempotency** untuk mencegah duplicate notification
+- **Menangani network timeout** dengan retry mechanism
 
-### Alur Komunikasi
-```
-Order Service → Payment Gateway → Payment Service → Notification Service
-     ↓                    ↓                    ↓                    ↓
-Create Order → Process Payment → Send Callback → Send Notification
-```
 
 ## 💳 Payment Flow Explanation
 
-1. **Customer membuat order** melalui Order Service
-2. **Order Service** mengirim request ke Payment Gateway
-3. **Payment Gateway** memproses pembayaran
-4. **Payment Gateway** mengirim callback ke Payment Service (bisa lebih dari 1 kali)
-5. **Payment Service** mengirim notifikasi ke Notification Service
-6. **Notification Service** mengirim email ke customer
+1. **Payment Gateway** mengirim callback ke Payment Service
+2. **Payment Service** mengirim notifikasi ke Notification Service
+3. **Notification Service** memproses dan mengirim email ke customer
+4. **Retry mechanism** menangani failed notifications
+5. **Idempotency** mencegah duplicate notifications
 
 ## 🔒 Idempotency Implementation
 
@@ -228,7 +222,7 @@ curl "http://localhost:8084/api/notifications/transaction/TXN001"
 ### Application Properties
 ```properties
 # Server Configuration
-server.port=8083
+server.port=8084
 spring.application.name=notification-service
 
 # Database Configuration
@@ -273,7 +267,4 @@ spring.task.execution.pool.max-size=10
 ✅ **Database Integration**: H2 dengan JPA  
 ✅ **Error Handling**: Global exception handling  
 
-Service ini siap digunakan untuk assessment interview dan menghandle semua requirement yang diberikan!
-=======
-# notification-service
->>>>>>> bd9f5266f16483f947b8f02494d3bcad21c540f5
+
